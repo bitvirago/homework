@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package task;
+
+option go_package = "github.com/virago/homework/pkg/protobuf/v1";
+
+service Task {
+    rpc GetNextTask (NextTaskRequest) returns (NextTaskResponse) {}
+    rpc UpdateTask (TaskUpdateRequest) returns (TaskUpdateResponse) {}
+}
+
+message NextTaskRequest {}
+
+message NextTaskResponse {
+    string ID = 1;
+    string Command = 2;
+}
+
+message TaskUpdateRequest {
+    string ID = 1;
+    string StartedAt = 2;
+    string FinishedAt = 3;
+    string Status = 4;
+    string StdOut = 5;
+    string StdErr = 6;
+    int32  Exit_code = 7;
+}
+
+message TaskUpdateResponse {}

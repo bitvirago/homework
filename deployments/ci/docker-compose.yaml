@@ -1,0 +1,47 @@
+version: '3.1'
+
+services:
+  db:
+    build:
+      context: ../..
+      dockerfile: build/ci/postgres.Dockerfile
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: password
+
+  api:
+    build:
+      context: ../..
+      dockerfile: build/ci/app.Dockerfile
+      args:
+        - COMMAND=api
+    ports:
+      - "8080:8080"
+      - "9092:9092"
+    environment:
+      DSN: "postgres://postgres:password@db:5432/postgres?sslmode=disable"
+
+  agent:
+    build:
+      context: ../..
+      dockerfile: build/ci/app.Dockerfile
+      args:
+        - COMMAND=agent
+    depends_on:
+      - api
+    environment:
+      SERVER_ADDRESS: "api:9092"
+
+  start-dependencies:
+    image: dadarek/wait-for-dependencies
+    depends_on:
+      - db
+      - api
+    command: db:5432 api:8080
+
+
+
+
+
